@@ -38,7 +38,6 @@ class CSVFileCombiner:
     def fileCombiner(self, argv: list):
 
         # get the file arguments given in the command line
-        inputFiles = argv[1:]
 
         # flag for the use of our header
         header = True
@@ -50,13 +49,16 @@ class CSVFileCombiner:
         handleMemory = 10**7
 
         # call our funtion in order to verify if files are found
-        if self.verifyFilePath(inputFiles):
+        if self.verifyFilePath(argv):
 
             """
             Nested for loop for each file that was passed.
             Inner loop will read file data,get the filenames and
             append the data to our list
             """
+            # get the file arguments given in the command line
+            inputFiles = argv[1:]
+            
             for files in inputFiles:
 
                 for data in pandas.read_csv(files, chunksize=handleMemory):
@@ -67,22 +69,22 @@ class CSVFileCombiner:
             # final for loop in order to print out our data in a csv format
             for paths in newCSV:
                 print(
-                    paths.to_csv(index=False, header=header, lineterminator="\n"),
+                    paths.to_csv(index=False, header=header, lineterminator="\n",chunksize=handleMemory),
                     end="",
                 )
                 header = False
 
         else:
-            print("Error while running code")
+            #print("Error while running code")
             return
 
     def verifyFilePath(self, arguments):
 
         # if to verify if any inputs were passed. Starts at 0 because argv was modified
-        if len(arguments) <= 0:
+        if len(arguments) <= 1:
             print("No file paths were placed as arguments.")
-            print("Code runs as so: ")
-            print("python csvCombiner.py ./fixtures/accessories.csv >combined.csv")
+            #print("Code runs as so: ")
+            #print("python csvCombiner.py ./fixtures/accessories.csv >combined.csv")
 
             return False
 
